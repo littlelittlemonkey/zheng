@@ -20,6 +20,58 @@ public class AESUtil {
     private static final String ENCODE_RULES = "zheng";
 
     /**
+     * 解密
+     * 解密过程：
+     * 1.同加密1-4步
+     * 2.将加密后的字符串反纺成byte[]数组
+     * 3.将加密内容解密
+     */
+    public static String aesDecode(String content) {
+        try {
+            //1.构造密钥生成器，指定为AES算法,不区分大小写
+            KeyGenerator keygen = KeyGenerator.getInstance("AES");
+            //2.根据ecnodeRules规则初始化密钥生成器
+            //生成一个128位的随机源,根据传入的字节数组
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.setSeed(ENCODE_RULES.getBytes());
+            keygen.init(128, random);
+            //3.产生原始对称密钥
+            SecretKey originalKey = keygen.generateKey();
+            //4.获得原始对称密钥的字节数组
+            byte[] raw = originalKey.getEncoded();
+            //5.根据字节数组生成AES密钥
+            SecretKey key = new SecretKeySpec(raw, "AES");
+            //6.根据指定算法AES自成密码器
+            Cipher cipher = Cipher.getInstance("AES");
+            //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            //8.将加密并编码后的内容解码成字节数组
+            byte[] byteContent = new BASE64Decoder().decodeBuffer(content);
+            /*
+             * 解密
+             */
+            byte[] byteDecode = cipher.doFinal(byteContent);
+            String aesDecode = new String(byteDecode, "utf-8");
+            return aesDecode;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException("兄弟，配置文件中的密码需要使用AES加密，请使用com.zheng.common.util.AESUtil工具类修改这些值！");
+            //e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+        //如果有错就返加nulll
+        return null;
+    }
+
+    /**
      * 加密
      * 1.构造密钥生成器
      * 2.根据ecnodeRules规则初始化密钥生成器
@@ -75,70 +127,22 @@ public class AESUtil {
         return null;
     }
 
-    /**
-     * 解密
-     * 解密过程：
-     * 1.同加密1-4步
-     * 2.将加密后的字符串反纺成byte[]数组
-     * 3.将加密内容解密
-     */
-    public static String aesDecode(String content) {
-        try {
-            //1.构造密钥生成器，指定为AES算法,不区分大小写
-            KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            //2.根据ecnodeRules规则初始化密钥生成器
-            //生成一个128位的随机源,根据传入的字节数组
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            random.setSeed(ENCODE_RULES.getBytes());
-            keygen.init(128, random);
-            //3.产生原始对称密钥
-            SecretKey originalKey = keygen.generateKey();
-            //4.获得原始对称密钥的字节数组
-            byte[] raw = originalKey.getEncoded();
-            //5.根据字节数组生成AES密钥
-            SecretKey key = new SecretKeySpec(raw, "AES");
-            //6.根据指定算法AES自成密码器
-            Cipher cipher = Cipher.getInstance("AES");
-            //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            //8.将加密并编码后的内容解码成字节数组
-            byte[] byteContent = new BASE64Decoder().decodeBuffer(content);
-            /*
-             * 解密
-             */
-            byte[] byteDecode = cipher.doFinal(byteContent);
-            String aesDecode = new String(byteDecode, "utf-8");
-            return aesDecode;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException("兄弟，配置文件中的密码需要使用AES加密，请使用com.zheng.common.util.AESUtil工具类修改这些值！");
-            //e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        }
-        //如果有错就返加nulll
-        return null;
-    }
-
     public static void main(String[] args) {
         String[] keys = {
-                "", "123456"
+                "root", ""
         };
-        System.out.println("key | AESEncode | AESDecode");
-        for (String key : keys) {
-            System.out.print(key + " | ");
-            String encryptString = aesEncode(key);
-            System.out.print(encryptString + " | ");
-            String decryptString = aesDecode(encryptString);
-            System.out.println(decryptString);
-        }
+//        System.out.println("key | AESEncode | AESDecode");
+//        for (String key : keys) {
+//            System.out.print(key + " | ");
+//            String encryptString = aesEncode(key);
+//            System.out.print(encryptString + " | ");
+//            String decryptString = aesDecode(encryptString);
+//            System.out.println(decryptString);
+//        }
+
+        String root = "zhulong";
+        System.out.println(root+"加密:"+aesEncode(root));
+
     }
 
 }

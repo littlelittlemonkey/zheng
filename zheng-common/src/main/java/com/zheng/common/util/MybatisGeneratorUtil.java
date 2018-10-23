@@ -77,6 +77,7 @@ public class MybatisGeneratorUtil {
 			Map<String, Object> table;
 
 			// 查询定制前缀项目的所有表
+			System.out.println("解密后的密码:"+AESUtil.aesDecode(jdbcPassword));
 			JdbcUtil jdbcUtil = new JdbcUtil(jdbcDriver, jdbcUrl, jdbcUsername, AESUtil.aesDecode(jdbcPassword));
 			List<Map> result = jdbcUtil.selectByParams(sql, null);
 			for (Map map : result) {

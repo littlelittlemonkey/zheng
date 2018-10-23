@@ -74,7 +74,9 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         // server需要登录
         String upmsType = PropertiesFileUtil.getInstance("zheng-upms-client").get("zheng.upms.type");
         if ("server".equals(upmsType)) {
-            WebUtils.toHttp(response).sendRedirect(ssoServerUrl.append("/sso/login").toString());
+            HttpServletRequest req = (HttpServletRequest)request;
+            StringBuffer back = req.getRequestURL();
+            WebUtils.toHttp(response).sendRedirect(ssoServerUrl.append("/sso/login?backurl="+back).toString());
             return false;
         }
         ssoServerUrl.append("/sso/index").append("?").append("appid").append("=").append(PropertiesFileUtil.getInstance("zheng-upms-client").get("zheng.upms.appID"));

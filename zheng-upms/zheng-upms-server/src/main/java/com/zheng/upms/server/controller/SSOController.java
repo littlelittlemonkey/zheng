@@ -93,6 +93,7 @@ public class SSOController extends BaseController {
         if (StringUtils.isNotBlank(code)) {
             // 回跳
             String backurl = request.getParameter("backurl");
+            StringBuffer url = request.getRequestURL();
             String username = (String) subject.getPrincipal();
             if (StringUtils.isBlank(backurl)) {
                 backurl = "/";
